@@ -19,5 +19,5 @@ class Cliente(models.Model):
     vendedor_id = models.ForeignKey(Vendedor, on_delete=models.CASCADE)
 
     def str__(self):
-            return self.razao_social_nome
+            return self.razao_social
     
