@@ -39,7 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'rest_framework',
+<<<<<<< HEAD
     'dados_cadastrais',
+=======
+    'rest_framework.authtoken',
+    'dados_cadastrais',
+    'drf_spectacular',
+>>>>>>> 6ed6c6a (Primeiro Commit)
 ]
 
 MIDDLEWARE = [
@@ -72,12 +78,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 REST_FRAMEWORK = {
+<<<<<<< HEAD
    'DEFAULT_PERMISSION_CLASSES': [
        'rest_framework.permissions.AllowAny',
    ],
    'DEFAULT_FILTER_BACKENDS': [
        'django_filters.rest_framework.DjangoFilterBackend',
    ],
+=======
+'DEFAULT_AUTHENTICATION_CLASSES': [
+'rest_framework.authentication.TokenAuthentication',
+'rest_framework.authentication.SessionAuthentication',
+],
+'DEFAULT_PERMISSION_CLASSES': [
+'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+],
+'DEFAULT_FILTER_BACKENDS': [
+'django_filters.rest_framework.DjangoFilterBackend',
+],
+'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # Adicionado para o drf-spectacular
+}
+
+SPECTACULAR_SETTINGS = {
+'TITLE': 'API de Livros',
+'DESCRIPTION': 'API para gerenciar livros, incluindo operações de CRUD e autenticação.',
+'VERSION': '3.0.0',
+'SERVE_INCLUDE_SCHEMA': False,
+'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@2.1.5',
+>>>>>>> 6ed6c6a (Primeiro Commit)
 }
 
 
