@@ -1,0 +1,504 @@
+openapi: 3.0.3
+info:
+  title: API de Livros
+  version: 3.0.0
+  description: API para gerenciar livros, incluindo operações de CRUD e autenticação.
+paths:
+  /api/clientes/:
+    get:
+      operationId: clientes_list
+      parameters:
+      - in: query
+        name: bairro_informado
+        schema:
+          type: string
+      - in: query
+        name: cep
+        schema:
+          type: string
+      - in: query
+        name: cidade
+        schema:
+          type: string
+      - in: query
+        name: cnpj
+        schema:
+          type: string
+      - in: query
+        name: data_cadastro
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: razao_social
+        schema:
+          type: string
+      - in: query
+        name: telefone
+        schema:
+          type: string
+      - in: query
+        name: uf
+        schema:
+          type: string
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clientes'
+          description: ''
+    post:
+      operationId: clientes_create
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+  /api/clientes/{id}/:
+    get:
+      operationId: clientes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    put:
+      operationId: clientes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    patch:
+      operationId: clientes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    delete:
+      operationId: clientes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/token/:
+    post:
+      operationId: token_create
+      tags:
+      - token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/veendedores/:
+    get:
+      operationId: veendedores_list
+      tags:
+      - veendedores
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendedor'
+          description: ''
+    post:
+      operationId: veendedores_create
+      tags:
+      - veendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+  /api/veendedores/{id}/:
+    get:
+      operationId: veendedores_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - veendedores
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    put:
+      operationId: veendedores_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - veendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    patch:
+      operationId: veendedores_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - veendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    delete:
+      operationId: veendedores_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - veendedores
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    Clientes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        razao_social:
+          type: string
+          maxLength: 100
+        cnpj:
+          type: string
+          maxLength: 14
+        telefone:
+          type: string
+          maxLength: 11
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        bairro_informado:
+          type: string
+          maxLength: 100
+        cep:
+          type: string
+          maxLength: 8
+        cidade:
+          type: string
+          maxLength: 100
+        uf:
+          type: string
+          maxLength: 2
+        data_cadastro:
+          type: string
+          format: date-time
+          readOnly: true
+        vendedor_id:
+          type: integer
+      required:
+      - bairro_informado
+      - cep
+      - cidade
+      - cnpj
+      - data_cadastro
+      - email
+      - id
+      - razao_social
+      - telefone
+      - uf
+      - vendedor_id
+    PatchedClientes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        razao_social:
+          type: string
+          maxLength: 100
+        cnpj:
+          type: string
+          maxLength: 14
+        telefone:
+          type: string
+          maxLength: 11
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        bairro_informado:
+          type: string
+          maxLength: 100
+        cep:
+          type: string
+          maxLength: 8
+        cidade:
+          type: string
+          maxLength: 100
+        uf:
+          type: string
+          maxLength: 2
+        data_cadastro:
+          type: string
+          format: date-time
+          readOnly: true
+        vendedor_id:
+          type: integer
+    PatchedVendedor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vendedor_nome:
+          type: string
+          maxLength: 100
+    Vendedor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vendedor_nome:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - vendedor_nome
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
