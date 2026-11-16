@@ -39,3 +39,64 @@ class ClienteAPITestCase(APITestCase):
             len(resposta.data),
             1
         )
+
+
+
+    def test_clientes_por_vendedor(self):
+        resposta = self.client.get(
+            f"/api/clientes/vendedor/{self.vendedor.id}/"
+        )
+
+        self.assertEqual(
+            resposta.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            len(resposta.data),
+            1
+        )
+
+        self.assertEqual(
+            resposta.data[0]["razao_social"],
+            "Mercado Exemplo LTDA"
+        )
+
+
+
+    def test_nao_listar_clientes_de_outro_vendedor(self):
+        outro_vendedor = Vendedor.objects.create(
+            vendedor_nome="Outro Vendedor"
+        )
+
+        Cliente.objects.create(
+            razao_social="Farmacia Exemplo LTDA",
+            cnpj="98765432000110",
+            telefone="61888888888",
+            email="farmacia@exemplo.com",
+            bairro_informado="Setor Sul",
+            cep="72410000",
+            cidade="Gama",
+            uf="DF",
+            vendedor_id=outro_vendedor
+        )
+
+        resposta = self.client.get(
+            f"/api/clientes/vendedor/{self.vendedor.id}/"
+        )
+
+        self.assertEqual(
+            resposta.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            len(resposta.data),
+            1
+        )
+
+        self.assertEqual(
+            resposta.data[0]["razao_social"],
+            "Mercado Exemplo LTDA"
+        )
+
