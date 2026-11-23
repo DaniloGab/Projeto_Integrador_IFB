@@ -1,60 +1,54 @@
-# Integração Primora + Django (proposta sobre o ZIP de 05/11/2026)
+# Integração do ETL com Django — proposta aprovada de nomenclatura (23/11/2026)
 
-## Como difere da importação dos filmes
+Este conjunto de arquivos foi preparado **a partir do ZIP `feature/etl` recebido em 23/11**. Ele não contém a API de Jennie nem a API de Gabriel. **Não fazer merge antes de revisar a migração e testar em banco descartável.**
 
-O `importarDados.py` do exercício dos filmes usa `csv.DictReader` e `sqlite3` com `SELECT/INSERT` para descobrir ou criar um gênero e associar cada filme a ele. O comando de gerenciamento do Primora usa a **mesma ideia**, mas `Vendedor.objects.get_or_create()` e `Cliente.objects.update_or_create()` (ORM Django). Assim, respeita modelos/migrações, funciona com SQLite e PostgreSQL e permite repetir a importação sem duplicar clientes.
+## Contrato dos dados
 
-## ATENÇÃO — trabalho simultâneo de outras pessoas
+- `Cliente.cnpj`, `telefone`, `email`, `cep`, `bairro_informado` e `data_cadastro`: **valores tratados** que serão apresentados na API.
+- `Cliente.cnpj_original`, `telefone_original`, `email_original`, `cep_original`, `bairro_informado_original`, `data_cadastro_original`: texto **exatamente recebido** do CSV; somente internos.
+- `Cliente.necessita_revisao`: sinalizador interno usado na API com o nome **`possui_pendencia`**, via serializer do responsável pela API de clientes.
+- `Cliente.status_cep`, `status_consistencia`, `bairro_via_cep` e `motivos_pendencia`: diagnósticos internos; não incluir na API pública.
+- `AuditoriaETL`: histórico detalhado, consultável no Django Admin (sem edição pelo Admin).
+- O ETL `primora_etl.py` mantém as saídas `*_normalizado`; a conversão de nomes ocorre em `importar_etl.py`.
+- `id_cliente` (do CSV) permanece distinto da chave primária numérica interna do Django.
 
-Os arquivos `models.py`, `admin.py`, `views.py` e a migration `0002_etl_normalizado.py` no **projeto completo demonstrativo** são uma proposta de integração baseada no ZIP do grupo enviado em 05/11. Eles **não foram aplicados ao repositório GitHub**. Se os colegas alteraram os modelos depois disso, revisar/mesclar essas alterações em conjunto antes de copiar.
+## Mudanças aplicadas somente à branch do ETL
 
-A pasta de atualização ETL (pacote pequeno) contém apenas o `primora_etl.py`, testes, comando e documentação. Os arquivos que alteram o schema ficam separados no projeto completo e na pasta `proposta_integracao_django/` do pacote pequeno para aprovação.
+- `models.py`: campos tratados/originais e modelo `AuditoriaETL`.
+- `migrations/0002_integracao_etl.py`: proposta **dependente de `0001_initial` da base de 23/11**.
+- `management/commands/importar_etl.py`: mapeamento de valores e preservação dos originais.
+- `admin.py`: exibe auditoria sem criação/edição/exclusão pela interface.
+- `tests.py`: testes da persistência no banco de testes isolado do Django.
 
-### Mudanças necessárias na modelagem
+## Ações que cabem aos colegas
 
-- `Cliente.id_cliente`: identificador do CSV, único e preservado para evitar importações duplicadas (além da PK numérica do Django).
-- Campos originais `cnpj`, `telefone`, `cep`, `bairro_informado`, `data_cadastro`: mantidos para compatibilidade com rotas existentes; `data_cadastro` fica como texto original, não `auto_now_add`.
-- Campos tratados: `cnpj_normalizado`, `telefone_normalizado`, `bairro_normalizado`, `cep_normalizado` (`max_length=9`), `data_cadastro_normalizado` (`DateField`).
-- Diagnóstico postal: `bairro_via_cep`, `status_cep`, `status_consistencia`, `cep_confirmado_via_cep`, `necessita_revisao`, `motivos_pendencia`.
-- `email`: sem unicidade; quatro clientes compartilham o mesmo e-mail fictício.
-- `AuditoriaETL`: tabela de histórico visível no admin; sem endpoint público.
-- `Vendedor`: é resolvido pelo nome durante a carga; o campo de FK original `vendedor_id` é mantido, embora seu nome seja pouco habitual no Django.
+- **Jennie:** serializer da API com lista explícita de campos; nunca usar `fields = '__all__'` após criar os campos internos. Expor `possui_pendencia = BooleanField(source='necessita_revisao', read_only=True)`; validar filtros por bairro.
+- **Gabriel:** integrar autenticação/permissões e declarar `drf-spectacular` em `requirements.txt` se importar suas rotas de documentação.
+- **Samuel:** atualizar testes integrados, README, MER/DER e documentação.
+- **Danilo:** revisar se a `0002` já existe na base; se existir, **não copiar/substituir a proposta**. Coordenar merge das branches e validação final.
 
-### Como executar com SQLite de desenvolvimento
-
-Na raiz do projeto, usando o ambiente virtual:
+## Passos de teste em uma cópia local limpa
 
 ```bash
 python -m pip install -r requirements.txt
 python -m pip install -r requirements-etl.txt
+python -m pytest -q tests/test_primora_etl.py
 python manage.py check
-python manage.py showmigrations dados_cadastrais
-python manage.py migrate
-python manage.py importar_etl --saida resultados
-python manage.py importar_etl --saida resultados --persistir
+python manage.py makemigrations --check --dry-run
 python manage.py test dados_cadastrais
+python manage.py showmigrations dados_cadastrais
+python manage.py migrate                    # SOMENTE banco local descartável
+python manage.py importar_etl --saida resultados_conferencia
+python manage.py importar_etl --saida resultados_conferencia --persistir
+python manage.py shell -c "from dados_cadastrais.models import Cliente,Vendedor,AuditoriaETL; print(Cliente.objects.count(),Vendedor.objects.count(),AuditoriaETL.objects.count())"
 ```
 
-Opcionalmente, o pequeno `importarDadosPrimora.py` executa a carga com o mesmo resultado:
+Primeira carga offline em SQLite vazio: 47 clientes, 5 vendedores, 217 eventos de auditoria. Cada reexecução preserva clientes por `id_cliente` e acrescenta eventos históricos.
 
-```bash
-python importarDadosPrimora.py --saida resultados
-```
+## Precauções
 
-No projeto do ZIP, `core/settings.py` já aponta para `db.sqlite3`. **Não é preciso criar esse arquivo manualmente**, pois `migrate` o cria. O `.gitignore` já exclui `db.sqlite3` do GitHub.
-
-Verificação rápida no console Django:
-
-```bash
-python manage.py shell -c "from dados_cadastrais.models import Cliente,Vendedor,AuditoriaETL; print(Cliente.objects.count(), Vendedor.objects.count(), AuditoriaETL.objects.count())"
-```
-
-Os dois primeiros números devem ser 47 e 5 após a primeira carga completa. O total de auditoria cresce a cada execução.
-
-### Migração e backup
-
-A migration `0002_etl_normalizado.py` foi escrita para a `0001_initial.py` do ZIP recebido. **Não substitua a migration de outra pessoa** se o histórico do GitHub já tiver mudado. Se já existir `db.sqlite3` com dados relevantes, faça backup, execute `showmigrations`, revise as alterações com Danilo e teste primeiro em uma cópia. A troca de `data_cadastro` para texto preserva a informação original como texto, mas deve ser revista caso já haja registros reais no banco.
-
-### Ações não cobertas pelo ETL
-
-Autenticação Token do DRF, permissões GET público/escrita autenticada, rotas específicas por vendedor/bairro, schema OpenAPI, Redoc e configuração futura do PostgreSQL são tarefas da equipe da API e não são concluídas por esse pacote. A `views.py` demonstrativa mantém o CRUD básico e adiciona filtros de dados normalizados; o sistema completo ainda depende dessas frentes.
+- A migração converte `data_cadastro` de `DateTimeField(auto_now_add=True)` para `DateField`. Em banco preexistente, rever dados e fazer **backup antes de migrar**; os campos `_original` só são preenchidos corretamente ao reimportar o CSV.
+- Um CEP `LOCALIZADO` significa que foi encontrado no ViaCEP, **não comprova o endereço do cliente**.
+- Uma pendência falsa significa apenas que não foi detectada pela validação executada, não garantia de validade absoluta.
+- Não publicar `SECRET_KEY` de produção nem usar `DEBUG=True` em produção.
+- O modo com CEP em tempo real requer rede; o modo offline basta para os testes reproduzíveis.
