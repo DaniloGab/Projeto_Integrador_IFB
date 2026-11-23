@@ -3,8 +3,8 @@ from django.db import models
 class Vendedor(models.Model):
     vendedor_nome = models.CharField(max_length=100)
 
-    def str__(self):
-        return self.vendedor_nome
+    def __str__(self):
+     return self.razao_social
 
 class Cliente(models.Model):
     razao_social = models.CharField(max_length=100)
@@ -18,6 +18,7 @@ class Cliente(models.Model):
     data_cadastro = models.DateTimeField(auto_now_add=True)
     vendedor_id = models.ForeignKey(Vendedor, on_delete=models.CASCADE)
 
-    def str__(self):
-            return self.razao_social
+    def __str__(self):
+      return self.razao_social
+    
     
