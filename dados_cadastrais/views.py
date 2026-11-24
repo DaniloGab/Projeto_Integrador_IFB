@@ -41,6 +41,21 @@ class ClienteViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path=r'bairro/(?P<nome>[^/]+)'
+    )
+    def clientes_por_bairro(self, request, nome=None):
+        clientes = self.get_queryset().filter(
+            bairro_informado__iexact=nome
+        )
+
+        serializer = self.get_serializer(clientes, many=True)
+
+        return Response(serializer.data)
+
+
 class VendedorViewSet(viewsets.ModelViewSet):
     queryset = Vendedor.objects.all()
     serializer_class = VendedorSerializer

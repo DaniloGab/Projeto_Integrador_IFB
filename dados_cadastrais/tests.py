@@ -243,3 +243,24 @@ class ClienteAPITestCase(APITestCase):
             Cliente.objects.count(),
             1
         )
+
+
+    def test_clientes_por_bairro(self):
+        resposta = self.client.get(
+            "/api/clientes/bairro/Setor%20Central/"
+        )
+
+        self.assertEqual(
+            resposta.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            len(resposta.data),
+            1
+        )
+
+        self.assertEqual(
+            resposta.data[0]["bairro_informado"],
+            "Setor Central"
+        )
