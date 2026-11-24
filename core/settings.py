@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'dados_cadastrais',
+    'rest_framework.authtoken',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -72,12 +74,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 REST_FRAMEWORK = {
-   'DEFAULT_PERMISSION_CLASSES': [
-       'rest_framework.permissions.AllowAny',
-   ],
-   'DEFAULT_FILTER_BACKENDS': [
-       'django_filters.rest_framework.DjangoFilterBackend',
-   ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -136,4 +142,11 @@ MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Distribuidora Vetor',
+    'DESCRIPTION': 'API de consulta e gestão de clientes e vendedores.',
+    'VERSION': '1.0.0',
+    'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@2.1.5',
 }
