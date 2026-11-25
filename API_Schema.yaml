@@ -1,0 +1,343 @@
+openapi: 3.0.3
+info:
+  title: API Distribuidora Vetor
+  version: 1.0.0
+  description: API REST para consulta e gestão de clientes e vendedores.
+servers:
+  - url: http://127.0.0.1:8000
+    description: Ambiente local de desenvolvimento
+paths:
+  /api/auth/token/:
+    post:
+      tags: [autenticação]
+      summary: Obtém token de autenticação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+      responses:
+        '200':
+          description: Token criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '400':
+          description: Credenciais inválidas
+  /api/vendedores/:
+    get:
+      tags: [vendedores]
+      summary: Lista vendedores
+      parameters:
+        - in: query
+          name: vendedor_nome
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de vendedores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendedor'
+    post:
+      tags: [vendedores]
+      summary: Cria vendedor
+      security: [{TokenAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendedorRequest'
+      responses:
+        '201':
+          description: Vendedor criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+        '401': {description: Autenticação necessária}
+  /api/vendedores/{id}/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [vendedores]
+      summary: Obtém vendedor
+      responses:
+        '200':
+          description: Vendedor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+        '404': {description: Vendedor não encontrado}
+    put:
+      tags: [vendedores]
+      summary: Atualiza vendedor
+      security: [{TokenAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendedorRequest'
+      responses:
+        '200': {description: Vendedor atualizado}
+        '401': {description: Autenticação necessária}
+        '404': {description: Vendedor não encontrado}
+    patch:
+      tags: [vendedores]
+      summary: Atualiza parcialmente vendedor
+      security: [{TokenAuth: []}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendedorRequest'
+      responses:
+        '200': {description: Vendedor atualizado}
+        '401': {description: Autenticação necessária}
+    delete:
+      tags: [vendedores]
+      summary: Remove vendedor
+      security: [{TokenAuth: []}]
+      responses:
+        '204': {description: Vendedor removido}
+        '401': {description: Autenticação necessária}
+        '404': {description: Vendedor não encontrado}
+  /api/vendedores/{id}/clientes/:
+    get:
+      tags: [vendedores]
+      summary: Lista clientes de um vendedor
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+        '404': {description: Vendedor não encontrado}
+  /api/clientes/:
+    get:
+      tags: [clientes]
+      summary: Lista e filtra clientes
+      parameters:
+        - in: query
+          name: search
+          schema: {type: string}
+        - in: query
+          name: razao_social
+          schema: {type: string}
+        - in: query
+          name: cnpj
+          schema: {type: string}
+        - in: query
+          name: telefone
+          schema: {type: string}
+        - in: query
+          name: email
+          schema: {type: string, format: email}
+        - in: query
+          name: bairro_informado
+          schema: {type: string}
+        - in: query
+          name: cep
+          schema: {type: string}
+        - in: query
+          name: cidade
+          schema: {type: string}
+        - in: query
+          name: uf
+          schema: {type: string, minLength: 2, maxLength: 2}
+        - in: query
+          name: data_cadastro
+          schema: {type: string, format: date}
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+    post:
+      tags: [clientes]
+      summary: Cria cliente
+      security: [{TokenAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '201':
+          description: Cliente criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '400': {description: Dados inválidos}
+        '401': {description: Autenticação necessária}
+  /api/clientes/{id}/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [clientes]
+      summary: Obtém cliente
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '404': {description: Cliente não encontrado}
+    put:
+      tags: [clientes]
+      summary: Atualiza cliente
+      security: [{TokenAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '200': {description: Cliente atualizado}
+        '400': {description: Dados inválidos}
+        '401': {description: Autenticação necessária}
+    patch:
+      tags: [clientes]
+      summary: Atualiza parcialmente cliente
+      security: [{TokenAuth: []}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '200': {description: Cliente atualizado}
+        '400': {description: Dados inválidos}
+        '401': {description: Autenticação necessária}
+    delete:
+      tags: [clientes]
+      summary: Remove cliente
+      security: [{TokenAuth: []}]
+      responses:
+        '204': {description: Cliente removido}
+        '401': {description: Autenticação necessária}
+  /api/clientes/vendedor/{vendedor_id}/:
+    get:
+      tags: [clientes]
+      summary: Lista clientes por vendedor
+      parameters:
+        - in: path
+          name: vendedor_id
+          required: true
+          schema: {type: integer}
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+  /api/clientes/bairro/{nome}/:
+    get:
+      tags: [clientes]
+      summary: Lista clientes por bairro
+      parameters:
+        - in: path
+          name: nome
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Envie: Token <chave>'
+  parameters:
+    Id:
+      in: path
+      name: id
+      required: true
+      schema: {type: integer}
+  schemas:
+    AuthTokenRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: {type: string}
+        password: {type: string, format: password}
+    AuthToken:
+      type: object
+      properties:
+        token: {type: string, readOnly: true}
+    Vendedor:
+      type: object
+      required: [vendedor_nome]
+      properties:
+        id: {type: integer, readOnly: true}
+        vendedor_nome: {type: string, maxLength: 100}
+    VendedorRequest:
+      type: object
+      required: [vendedor_nome]
+      properties:
+        vendedor_nome: {type: string, maxLength: 100}
+    Cliente:
+      type: object
+      required: [razao_social, cidade, uf, vendedor_id]
+      properties:
+        id: {type: integer, readOnly: true}
+        id_cliente: {type: string, nullable: true, maxLength: 24}
+        razao_social: {type: string, maxLength: 255}
+        cnpj: {type: string, nullable: true, maxLength: 18}
+        telefone: {type: string, nullable: true, maxLength: 20}
+        email: {type: string, nullable: true, format: email, maxLength: 254}
+        bairro_informado: {type: string, nullable: true, maxLength: 100}
+        cep: {type: string, nullable: true, maxLength: 9}
+        cidade: {type: string, maxLength: 100}
+        uf: {type: string, minLength: 2, maxLength: 2}
+        data_cadastro: {type: string, nullable: true, format: date}
+        vendedor_id: {type: integer}
+        vendedor_responsavel: {type: string, readOnly: true}
+        possui_pendencia: {type: boolean, readOnly: true}
+    ClienteRequest:
+      type: object
+      required: [razao_social, cidade, uf, vendedor_id]
+      properties:
+        id_cliente: {type: string, nullable: true, maxLength: 24}
+        razao_social: {type: string, maxLength: 255}
+        cnpj: {type: string, nullable: true, maxLength: 18}
+        telefone: {type: string, nullable: true, maxLength: 20}
+        email: {type: string, nullable: true, format: email, maxLength: 254}
+        bairro_informado: {type: string, nullable: true, maxLength: 100}
+        cep: {type: string, nullable: true, maxLength: 9}
+        cidade: {type: string, maxLength: 100}
+        uf: {type: string, minLength: 2, maxLength: 2}
+        data_cadastro: {type: string, nullable: true, format: date}
+        vendedor_id: {type: integer}

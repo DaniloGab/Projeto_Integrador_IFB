@@ -1,0 +1,838 @@
+openapi: 3.0.3
+info:
+  title: API Distribuidora Vetor
+  version: 1.0.0
+  description: API de consulta e gestão de clientes e vendedores.
+paths:
+  /api/auth/token/:
+    post:
+      operationId: auth_token_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/clientes/:
+    get:
+      operationId: clientes_list
+      parameters:
+      - in: query
+        name: bairro_informado
+        schema:
+          type: string
+      - in: query
+        name: cep
+        schema:
+          type: string
+      - in: query
+        name: cidade
+        schema:
+          type: string
+      - in: query
+        name: cnpj
+        schema:
+          type: string
+      - in: query
+        name: data_cadastro
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: razao_social
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: telefone
+        schema:
+          type: string
+      - in: query
+        name: uf
+        schema:
+          type: string
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clientes'
+          description: ''
+    post:
+      operationId: clientes_create
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+  /api/clientes/{id}/:
+    get:
+      operationId: clientes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    put:
+      operationId: clientes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Clientes'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    patch:
+      operationId: clientes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedClientes'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clientes'
+          description: ''
+    delete:
+      operationId: clientes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cliente.
+        required: true
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/clientes/bairro/{nome}/:
+    get:
+      operationId: clientes_bairro_list
+      parameters:
+      - in: query
+        name: bairro_informado
+        schema:
+          type: string
+      - in: query
+        name: cep
+        schema:
+          type: string
+      - in: query
+        name: cidade
+        schema:
+          type: string
+      - in: query
+        name: cnpj
+        schema:
+          type: string
+      - in: query
+        name: data_cadastro
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: path
+        name: nome
+        schema:
+          type: string
+          pattern: ^[^/]+$
+        required: true
+      - in: query
+        name: razao_social
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: telefone
+        schema:
+          type: string
+      - in: query
+        name: uf
+        schema:
+          type: string
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clientes'
+          description: ''
+  /api/clientes/vendedor/{vendedor_id}/:
+    get:
+      operationId: clientes_vendedor_list
+      parameters:
+      - in: query
+        name: bairro_informado
+        schema:
+          type: string
+      - in: query
+        name: cep
+        schema:
+          type: string
+      - in: query
+        name: cidade
+        schema:
+          type: string
+      - in: query
+        name: cnpj
+        schema:
+          type: string
+      - in: query
+        name: data_cadastro
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: razao_social
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: telefone
+        schema:
+          type: string
+      - in: query
+        name: uf
+        schema:
+          type: string
+      - in: path
+        name: vendedor_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - clientes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clientes'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/vendedores/:
+    get:
+      operationId: vendedores_list
+      parameters:
+      - in: query
+        name: vendedor_nome
+        schema:
+          type: string
+      tags:
+      - vendedores
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendedor'
+          description: ''
+    post:
+      operationId: vendedores_create
+      tags:
+      - vendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+  /api/vendedores/{id}/:
+    get:
+      operationId: vendedores_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - vendedores
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    put:
+      operationId: vendedores_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - vendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vendedor'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    patch:
+      operationId: vendedores_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - vendedores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVendedor'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendedor'
+          description: ''
+    delete:
+      operationId: vendedores_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      tags:
+      - vendedores
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vendedores/{id}/clientes/:
+    get:
+      operationId: vendedores_clientes_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vendedor.
+        required: true
+      - in: query
+        name: vendedor_nome
+        schema:
+          type: string
+      tags:
+      - vendedores
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clientes'
+          description: ''
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    Clientes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        id_cliente:
+          type: string
+          nullable: true
+          maxLength: 24
+        razao_social:
+          type: string
+          maxLength: 255
+        cnpj:
+          type: string
+          nullable: true
+          maxLength: 18
+        telefone:
+          type: string
+          nullable: true
+          maxLength: 20
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        bairro_informado:
+          type: string
+          nullable: true
+          maxLength: 100
+        cep:
+          type: string
+          nullable: true
+          maxLength: 9
+        cidade:
+          type: string
+          maxLength: 100
+        uf:
+          type: string
+          maxLength: 2
+        data_cadastro:
+          type: string
+          format: date
+          nullable: true
+        vendedor_id:
+          type: integer
+        vendedor_responsavel:
+          type: string
+          readOnly: true
+        possui_pendencia:
+          type: boolean
+          readOnly: true
+      required:
+      - cidade
+      - id
+      - possui_pendencia
+      - razao_social
+      - uf
+      - vendedor_id
+      - vendedor_responsavel
+    PatchedClientes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        id_cliente:
+          type: string
+          nullable: true
+          maxLength: 24
+        razao_social:
+          type: string
+          maxLength: 255
+        cnpj:
+          type: string
+          nullable: true
+          maxLength: 18
+        telefone:
+          type: string
+          nullable: true
+          maxLength: 20
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        bairro_informado:
+          type: string
+          nullable: true
+          maxLength: 100
+        cep:
+          type: string
+          nullable: true
+          maxLength: 9
+        cidade:
+          type: string
+          maxLength: 100
+        uf:
+          type: string
+          maxLength: 2
+        data_cadastro:
+          type: string
+          format: date
+          nullable: true
+        vendedor_id:
+          type: integer
+        vendedor_responsavel:
+          type: string
+          readOnly: true
+        possui_pendencia:
+          type: boolean
+          readOnly: true
+    PatchedVendedor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vendedor_nome:
+          type: string
+          maxLength: 100
+    Vendedor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vendedor_nome:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - vendedor_nome
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

@@ -110,6 +110,40 @@ curl -i -X POST http://127.0.0.1:8000/api/vendedores/ \
 - Admin com `Vendedor` e `Cliente` registrados.
 - Falta fechar a rota `clientes/vendedor/{id}/`, atualizar o `requirements.txt` e ajustar os nomes dos campos quando os models forem definidos.
 
+---
+
+## 📚 Documentação organizada
+
+A documentação técnica do projeto está separada por responsabilidade:
+
+| Documento | Conteúdo |
+|---|---|
+| [Documentação da API](docs/API.md) | Rotas, autenticação, filtros, validações e exemplos |
+| [Modelo Entidade-Relacionamento — MER](docs/MER.md) | Entidades, atributos, cardinalidades e regras de negócio |
+| [Diagrama Entidade-Relacionamento — DER](docs/DER.md) | Estrutura física, tabelas, chaves e índices |
+| [Integração Django](docs/INTEGRACAO_DJANGO.md) | Decisões de integração da API e do ETL |
+| [ETL Primora](docs/ETL.md) | Limpeza, normalização, qualidade e auditoria |
+| [Schema OpenAPI](API_Schema.yaml) | Contrato estático da API em OpenAPI 3.0 |
+
+### Interfaces disponíveis
+
+Após iniciar o projeto com `python manage.py runserver`:
+
+- API: `http://127.0.0.1:8000/api/`
+- Redoc: `http://127.0.0.1:8000/api/docs/`
+- Schema JSON gerado: `http://127.0.0.1:8000/api/schema/`
+- Admin: `http://127.0.0.1:8000/admin/`
+
+### Recursos principais
+
+- `/api/clientes/`
+- `/api/clientes/{id}/`
+- `/api/clientes/vendedor/{vendedor_id}/`
+- `/api/clientes/bairro/{nome}/`
+- `/api/vendedores/`
+- `/api/vendedores/{id}/clientes/`
+- `/api/auth/token/`
+
 # 📘 Projeto Integrador API e ETL - Desafio Primora
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg?logo=python)](https://www.python.org/downloads/)
